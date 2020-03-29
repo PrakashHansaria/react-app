@@ -5,25 +5,61 @@ import Person from './Person/Person'
 class App extends Component {
   state = {
     persons:[
-      {name:"Prakash", age:21},
-      {name:"Ujjwal", age:21},
-      {name:"Nidhi", age:25} 
-    ]
+      {id:"a101", name:"Prakash", age:21},
+      {id:"a102", name:"Ujjwal", age:21},
+      {id:"a103", name:"Nidhi", age:25} 
+    ],
+    togglePerson : false
+  }
+  nameChnageHandler = (event,id) => {
+
+    const personIndex = this.state.persons.findIndex(p=>p.id===id)
+    const person = {...this.state.persons[personIndex]}
+
+    person.name=event.target.value
+
+    const persons = [...this.state.persons]
+    persons[personIndex] = person
+
+    this.setState({persons:persons})
   }
 
-  swithNamehandler = () => {
-    // console.log("Click Registered")
-    this.setState({persons[0].name:"NotPrakash"})
+  togglePersonHandler = () => {
+    this.setState({togglePerson: !this.state.togglePerson})
+  }
+
+  deletePersonHandler = (index) => {
+    const person = this.state.persons
+    person.splice(index,1)
+    this.setState({persons:person})
   }
 
   render(){
+
+    let persons = null;
+
+    if(this.state.togglePerson){
+      persons = (
+        <div>
+          {this.state.persons.map((person,index) => {
+            return(
+              <Person 
+            click={() => this.deletePersonHandler(index)}
+            name={person.name} 
+            age={person.age}
+            key={person.id}
+            change={(event) => this.nameChnageHandler(event, person.id)} />
+            )
+          })}
+        </div>
+      )
+    }
+
     return (
       <div className="App">
        <h1>Not the default React page anymore</h1>
-       <button onClick={this.swithNamehandler}>Switch name</button>
-       <Person name={this.state.persons[0].name} age={this.state.persons[0].age} />
-       <Person name={this.state.persons[1].name} age={this.state.persons[1].age} >Mujhe charas peena h</Person>
-       <Person name={this.state.persons[2].name} age={this.state.persons[2].age} />
+       <button onClick={this.togglePersonHandler}>Toggle Div</button>
+       {persons}
       </div>
     );
   }
